@@ -1,0 +1,68 @@
+import { defineConfig, devices } from '@playwright/test';
+
+
+/**
+ * Read environment variables from file.
+ * https://github.com/motdotla/dotenv
+ */
+// import dotenv from 'dotenv';
+// import path from 'path';
+// dotenv.config({ path: path.resolve(__dirname, '.env') });
+//require('dotenv').config();
+
+/**
+ * See https://playwright.dev/docs/test-configuration.
+ */
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: false,
+  /* Retry on CI only */
+  retries: process.env.CI ? 2 : 0,
+  /* Opt out of parallel tests on CI. */
+  workers: 1,
+  reporter: [['html'],['list']],
+  // use: {
+  //   trace: 'on-first-retry',
+  //   extraHTTPHeaders: {
+  //     'Authorization': `Token ${process.env.ACCESS_TOKEN}`
+  //   },
+  // },
+
+    /* Configure projects for major browsers */
+    // extraHTTPHeaders: {
+
+    // },
+    // httpCredentials: {
+    //   username: '',
+    //   password: ''
+    // }
+  
+
+  /* Configure projects for major browsers */
+  projects: [
+    {
+      name: 'api-testing',
+      testMatch: 'example*',
+      dependencies: ['smoke-tests']
+    },
+
+    {
+      name: 'smoke-tests',
+      testMatch: 'smoke*'
+    },
+
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'], storageState: '.auth/user.json' },   
+    },
+
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'], storageState: '.auth/user.json' },
+    },
+
+
+  ],
+
+
+});
