@@ -1,6 +1,9 @@
 import { test } from '../utils/fixtures';
 import { expect } from '@playwright/test'
 import { config } from '../api-test.config';
+import { ArticlesListPage } from '../page_objects/articlesListPage';
+import { ArticleDetailsPage } from '../page_objects/articleDetailsPage';
+import { articleDetailsData } from '../test_data/articleDetailsData';
 
    
 test.beforeEach(async({page}) => {
@@ -9,56 +12,31 @@ test.beforeEach(async({page}) => {
 })
 
 test('e2e UI test @UIe2e', async ({page}) => {
-    
-    // Create new article
-    await page.getByRole('link', { name: 'New Article' }).click();
-    await page.getByPlaceholder('Article Title').fill('test title');
-    await page.getByPlaceholder('What\'s this article about?').fill('article is about...');
-    await page.getByPlaceholder('Write your article (in').fill('article text');
-    await page.getByPlaceholder('Enter tags').fill('some added tag');
-    await page.getByRole('button', { name: 'Publish Article' }).click();
+    const onArticlesListPage = new ArticlesListPage(page)
+    const onArticleDetailsPage = new ArticleDetailsPage(page)
 
-    // Verify that the new article is created
-    await expect(page.getByRole('heading')).toHaveText('test title');
+    // Create article from UI
+    await onArticlesListPage.createArticle(
+        articleDetailsData.articleTitle,
+        articleDetailsData.articleDescription,
+        articleDetailsData.articleText, 
+        articleDetailsData.articleTags)
+    await onArticleDetailsPage.verifyArticleTitleIs(articleDetailsData.articleTitle)
 
-    // Navigate to the articles list and verifies that new article is present in the list
-    await page.getByRole('link', { name: 'conduit' }).first().click();
-    await expect (page.getByRole('link', { name: 'test title article is about...' })).toBeVisible();
+    await onArticleDetailsPage.navigateToArticlesListPage()
+    await onArticlesListPage.verifyArticleIsShownInTheListByTitle(articleDetailsData.articleTitle)
 
-    // Edit article
-    await page.getByRole('link', { name: 'test title article is about... Read more...' }).click();
-    await page.getByRole('link', { name: ' Edit Article' }).first().click();
-    await page.getByPlaceholder('What\'s this article about?').click();
-    await page.getByPlaceholder('What\'s this article about?').clear();
-    await page.getByPlaceholder('What\'s this article about?').fill('text edited');
-    await page.getByPlaceholder('Write your article (in').click();
-    await page.getByPlaceholder('Write your article (in').clear();
-    await page.getByPlaceholder('Write your article (in').fill('text edited');
-    await page.getByPlaceholder('Article Title').click();
-    await page.getByPlaceholder('Article Title').clear();
-    await page.getByPlaceholder('Article Title').fill("Edited title");
-    await page.getByRole('button', { name: 'Publish Article' }).click();
+    // Edit article from UI
+    await onArticlesListPage.selectTheFirstArticleInTheListBy(`${articleDetailsData.articleTitle} ${articleDetailsData.articleDescription} Read more...`)
+    await onArticleDetailsPage.editArticleTo(articleDetailsData.changedArticleTitle, articleDetailsData.changedArticleDescription, articleDetailsData.changedArticleText)
+    await onArticleDetailsPage.verifyArticleTitleIs(articleDetailsData.changedArticleTitle)
 
-    // Verifies that article is edited and shown on the article details page
-    await page.waitForSelector('h1');
-    await expect (page.getByRole('heading')).toHaveText("Edited title");
-
-    // Verifies that article is edited and shown on the article details page
-    await page.waitForSelector('h1');
-    await expect (page.getByRole('heading')).toHaveText("Edited title");
-
-    await page.getByRole('navigation').getByRole('link', { name: 'conduit' }).click();
-
-    // Verifies that edited article is shown in the list
-    await expect (page.getByRole('link', { name: 'Edited title' })).toBeVisible();
+    await onArticleDetailsPage.navigateToArticlesListPage()
+    await onArticlesListPage.verifyArticleIsShownInTheListByTitle(articleDetailsData.changedArticleTitle)
 
     // Delete created article from UI
-    await page.getByRole('link', { name: 'Edited title' }).click();
-    await page.getByRole('button', { name: 'Delete Article' }).first().click();
-    await page.getByRole('link', { name: 'conduit' }).first().click();
-    
-    // Verifies that article is deleted and is not shown in the list
-    await expect (page.getByRole('link', { name: 'Edited title' })).toBeHidden();
+    await onArticleDetailsPage.deleteArticleByTitle(articleDetailsData.changedArticleTitle)
+    await onArticlesListPage.verifyThatArticleIsNotInTheListByTitle(articleDetailsData.changedArticleTitle)
 
 })
 
