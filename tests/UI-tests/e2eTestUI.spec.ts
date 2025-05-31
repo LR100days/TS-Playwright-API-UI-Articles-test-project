@@ -1,9 +1,9 @@
-import { test } from '../utils/fixtures';
-import { config } from '../api-test.config';
-import { ArticlesListPage } from '../page_objects/articlesListPage';
-import { ArticleDetailsPage } from '../page_objects/articleDetailsPage';
-import { articleDetailsData } from '../test_data/articleDetailsData';
-import { LoginPage } from '../page_objects/loginPage';
+import { test } from '../../utils/fixtures';
+import { config } from '../../api-test.config';
+import { ArticlesListPage } from '../../page_objects/articlesListPage';
+import { ArticleDetailsPage } from '../../page_objects/articleDetailsPage';
+import { articleDetailsData } from '../../test_data/articleDetailsData';
+import { LoginPage } from '../../page_objects/loginPage';
 
 
 test('e2e UI test @UIe2e', async ({page}) => {
@@ -55,5 +55,7 @@ test('e2e UI test @UIe2e', async ({page}) => {
     // Delete created article from UI
     await onArticleDetailsPage.deleteArticleByTitle(articleDetailsData.changedArticleTitle)
     await onArticlesListPage.verifyThatArticleIsNotInTheListByTitle(articleDetailsData.changedArticleTitle)
+
+    await page.close()
 
 })

@@ -32,17 +32,20 @@ export default defineConfig({
   projects: [
     {
       name: 'api-testing',
+      testDir: './tests',
       testMatch: 'example*',
       dependencies: ['smoke-tests']
     },
 
     {
       name: 'smoke-tests',
+      testDir: './tests/API-tests',
       testMatch: 'smoke*'
     },
 
     {
       name: 'ui-e2etest-in-chromium',
+      testDir: './tests/UI-tests',
       use: {
       viewport: null}
     },
