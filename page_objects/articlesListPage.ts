@@ -20,7 +20,8 @@ export class ArticlesListPage {
     }
     
     async verifyThatArticleIsNotInTheListByTitle( articleTitle: string){
-        await expect (this.page.getByRole('link', { name: articleTitle })).toBeHidden();
+        await this.page.waitForSelector('.sidebar')
+        await expect (this.page.getByRole('link', { name: articleTitle })).not.toBeVisible();
     }
     
     async verifyFirstArticleInTheListHasDescription(articleTitle: string){
@@ -28,8 +29,17 @@ export class ArticlesListPage {
         await expect(this.page.locator('p').first()).toHaveText(articleTitle);
     }
 
-    async verifyFirstArticleTagsAre(articleTags: any){
-        //To be done
+    async verifyTagsForArticleAre(articleTags: any, articleTitle: string){
+        let expectedSortedListOfTags = articleTags.sort()
+        const tagsList = (await this.page.getByRole('link', { name: articleTitle }).locator('.tag-list li').allTextContents()).map(tag => tag.trim());
+
+        let actualSortedTagsList = tagsList.sort()
+        expect(actualSortedTagsList).toEqual(expectedSortedListOfTags)
+    }
+
+    async verifyThatHomePageIsShown(){
+        await expect(this.page.getByRole('link', { name: 'Home' })).toBeVisible()
+        await expect(this.page.getByText('Your Feed')).toBeVisible()
     }
 
 }

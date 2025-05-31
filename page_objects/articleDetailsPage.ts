@@ -7,8 +7,8 @@ export class ArticleDetailsPage {
     }
 
     async clickEditArticleButton(){
-        await this.page.getByRole('link', { name: ' Edit Article' }).first().click();
-        await this.page.waitForTimeout(500)
+        await this.page.getByRole('link', { name: 'Edit Article' }).first().click();
+        await this.page.waitForTimeout(500)   
     }
 
     async enterNewArticleTitle(articleTitle: string){
@@ -33,12 +33,23 @@ export class ArticleDetailsPage {
     }
 
     async enterNewArticleTags(articleTags: any){
+
         const articleTagsField = this.page.getByPlaceholder('Enter tags')
-        //To be done
+        await articleTagsField.click();
+        await articleTagsField.clear();
+
+        let tagsList = articleTags;
+        for (const tagValue of tagsList) {
+            await articleTagsField.fill(tagValue);
+            await articleTagsField.press('Enter')}
     }
 
     async verifyArticleTagsAre(articleTags: any){
-        //To be done
+        let expectedSortedListOfTags = articleTags.sort()
+        const tagsList = (await this.page.locator('.tag-list li').allTextContents()).map(tag => tag.trim());
+
+        let actualSortedTagsList = tagsList.sort()
+        expect(actualSortedTagsList).toEqual(expectedSortedListOfTags)
     }
 
     async clickPublishArticleButton(){

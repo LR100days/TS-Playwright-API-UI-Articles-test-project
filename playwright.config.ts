@@ -21,22 +21,12 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: 1,
   reporter: [['html'],['list']],
-  // use: {
-  //   trace: 'on-first-retry',
-  //   extraHTTPHeaders: {
-  //     'Authorization': `Token ${process.env.ACCESS_TOKEN}`
-  //   },
-  // },
-
-    /* Configure projects for major browsers */
-    // extraHTTPHeaders: {
-
-    // },
-    // httpCredentials: {
-    //   username: '',
-    //   password: ''
-    // }
-  
+  use: {
+    trace: 'on-first-retry',
+    launchOptions: {
+      args: ["--start-maximized"],
+    },
+  },
 
   /* Configure projects for major browsers */
   projects: [
@@ -52,15 +42,10 @@ export default defineConfig({
     },
 
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], storageState: '.auth/user.json' },   
+      name: 'ui-e2etest-in-chromium',
+      use: {
+      viewport: null}
     },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'], storageState: '.auth/user.json' },
-    },
-
 
   ],
 
