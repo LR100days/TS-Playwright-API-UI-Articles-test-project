@@ -1,0 +1,11 @@
+{
+    "article": {
+        "title": "Api Created",
+        "description": "QA test",
+        "body": "Some text here",
+        "tagList":
+          [
+            "my tag"
+          ]
+    }
+}

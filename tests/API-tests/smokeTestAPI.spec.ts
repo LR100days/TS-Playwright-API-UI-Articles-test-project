@@ -1,5 +1,7 @@
 import { test } from '../../utils/fixtures';
 import { expect } from '../../utils/custom-expect'
+import articleRequestPayload from '../../requests-objects/POST-article.json'
+import { articleDetailsData } from '../../test_data/articleDetailsDataGenerator';
 
 
 test('Get Articles', async({ api }) => {
@@ -24,29 +26,22 @@ test('Get Test Tags', async({ api }) => {
 })
 
 test('Create and delete Article', async({ api }) => {
+    const initialArticleTitle = articleDetailsData.articleTitle
+    articleRequestPayload.article.title = initialArticleTitle
     const createArticleResponse = await api
         .path('/articles')
-        .body({
-            "article": {
-                "title": "Api Created",
-                "description": "QA test",
-                "body": "Some text here",
-                "tagList": [
-                    "my tag"
-                ]
-            }
-          },)
+        .body(articleRequestPayload)
         .postRequest(201)
 
     await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_article')
-    expect(createArticleResponse.article.title).shouldEqual('Api Created')
+    expect(createArticleResponse.article.title).shouldEqual(initialArticleTitle)
     const slugId = createArticleResponse.article.slug
 
     const articlesResponse = await api
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
-    expect(articlesResponse.articles[0].title).shouldEqual('Api Created')
+    expect(articlesResponse.articles[0].title).shouldEqual(initialArticleTitle)
 
     await api
         .path(`/articles/${slugId}`)
@@ -56,50 +51,38 @@ test('Create and delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
-    expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual('Api Created')
+    expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual(initialArticleTitle)
 })
 
 test('Create, Update and Delete Article', async({ api }) => {
+    const initialArticleTitle = articleDetailsData.articleTitle
+    articleRequestPayload.article.title = initialArticleTitle
+    
     const createArticleResponse = await api
         .path('/articles')
-        .body({
-            "article": {
-                "title": "Api Created NEW",
-                "description": "QA test",
-                "body": "Some text here",
-                "tagList": [
-                    "my tag"
-                ]
-            }
-          },)
+        .body(articleRequestPayload)
         .postRequest(201)
     
-    expect(createArticleResponse.article.title).shouldEqual('Api Created NEW')
+    expect(createArticleResponse.article.title).shouldEqual(initialArticleTitle)
     const slugId = createArticleResponse.article.slug
+
+    const modifiedlArticleTitle = articleDetailsData.changedArticleTitle
+    articleRequestPayload.article.title = modifiedlArticleTitle
 
     const updateArticleResponse = await api
         .path(`/articles/${slugId}`)
-        .body({
-            "article": {
-                "title": "Api Created MODIFIED",
-                "description": "QA test",
-                "body": "Some text here",
-                "tagList": [
-                    "my tag"
-                ]
-            }
-          },)
+        .body(articleRequestPayload)
 
         .putRequest(200)
 
-    expect(updateArticleResponse.article.title).shouldEqual('Api Created MODIFIED')
+    expect(updateArticleResponse.article.title).shouldEqual(modifiedlArticleTitle)
     const newSlugId = updateArticleResponse.article.slug
 
     const articlesResponse = await api
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
-    expect(articlesResponse.articles[0].title).shouldEqual('Api Created MODIFIED')
+    expect(articlesResponse.articles[0].title).shouldEqual(modifiedlArticleTitle)
 
     await api
         .path(`/articles/${newSlugId}`)
@@ -109,5 +92,5 @@ test('Create, Update and Delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
-    expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual('Api Created MODIFIED')
+    expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual(modifiedlArticleTitle)
 })

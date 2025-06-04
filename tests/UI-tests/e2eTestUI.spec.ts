@@ -2,7 +2,7 @@ import { test } from '../../utils/fixtures';
 import { config } from '../../api-test.config';
 import { ArticlesListPage } from '../../page_objects/articlesListPage';
 import { ArticleDetailsPage } from '../../page_objects/articleDetailsPage';
-import { articleDetailsData } from '../../test_data/articleDetailsData';
+import { articleDetailsData } from '../../test_data/articleDetailsDataGenerator';
 import { LoginPage } from '../../page_objects/loginPage';
 
 
