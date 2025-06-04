@@ -22,7 +22,7 @@ export default defineConfig({
   workers: 1,
   reporter: [['html'],['list']],
   use: {
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     launchOptions: {
       args: ["--start-maximized"],
     },
@@ -40,7 +40,6 @@ export default defineConfig({
     {
       name: 'smoke-tests',
       testDir: './tests/API-tests',
-      testMatch: 'smoke*'
     },
 
     {
