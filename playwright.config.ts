@@ -30,15 +30,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: 'api-testing',
-      testDir: './tests',
-      testMatch: 'example*',
-      dependencies: ['smoke-tests']
-    },
+    // {
+    //   name: 'api-testing',
+    //   testDir: './tests',
+    //   testMatch: 'example*',
+    //   dependencies: ['api-smoke-tests']
+    // },
 
     {
-      name: 'smoke-tests',
+      name: 'api-smoke-tests',
       testDir: './tests/API-tests',
     },
 
@@ -46,7 +46,8 @@ export default defineConfig({
       name: 'ui-e2etest-in-chromium',
       testDir: './tests/UI-tests',
       use: {
-      viewport: null}
+        defaultBrowserType: 'chromium',
+        viewport: null}
     },
 
   ],
