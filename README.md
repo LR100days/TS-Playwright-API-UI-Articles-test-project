@@ -1,0 +1,1 @@
+This test project aims to demonstrate the overall design idea of the framework for the API and UI. It uses schema validation, user assertions, a status code validator for the API, and page objects for the UI. This test project demonstrates basic approaches that can be scaled and used in real projects.
