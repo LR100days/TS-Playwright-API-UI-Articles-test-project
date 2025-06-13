@@ -5,6 +5,10 @@ import { ArticleDetailsPage } from '../../page_objects/articleDetailsPage';
 import { articleDetailsData } from '../../test_data/articleDetailsDataGenerator';
 import { LoginPage } from '../../page_objects/loginPage';
 
+test.beforeEach( async({page}) => {
+  await page.goto(`${config.baseURL}/login`)
+
+})
 
 test('e2e UI test @UIe2e', async ({page}) => {
     const onArticlesListPage = new ArticlesListPage(page)
@@ -12,7 +16,9 @@ test('e2e UI test @UIe2e', async ({page}) => {
     const onLoginPage = new LoginPage(page)
 
     //Login
-    await onLoginPage.loginWithValidCredentials(config.userEmail, config.userPassword)
+    await onLoginPage.enterConfiguredValidEmail()
+    await onLoginPage.enterConfiguredValidPassword()
+    await onLoginPage.clickSignInButton()
     await onArticlesListPage.verifyThatHomePageIsShown()
 
     // Create article from UI

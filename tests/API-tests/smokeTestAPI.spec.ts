@@ -41,6 +41,7 @@ test('Create and delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
+    await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
     expect(articlesResponse.articles[0].title).shouldEqual(initialArticleTitle)
 
     await api
@@ -51,6 +52,7 @@ test('Create and delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
+    await expect(articlesResponseAfterDeletion).shouldMatchSchema('articles', 'GET_articles')
     expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual(initialArticleTitle)
 })
 
@@ -63,6 +65,7 @@ test('Create, Update and Delete Article', async({ api }) => {
         .body(articleRequestPayload)
         .postRequest(201)
     
+    await expect(createArticleResponse).shouldMatchSchema('articles', 'POST_article')
     expect(createArticleResponse.article.title).shouldEqual(initialArticleTitle)
     const slugId = createArticleResponse.article.slug
 
@@ -72,9 +75,9 @@ test('Create, Update and Delete Article', async({ api }) => {
     const updateArticleResponse = await api
         .path(`/articles/${slugId}`)
         .body(articleRequestPayload)
-
         .putRequest(200)
 
+    await expect(updateArticleResponse).shouldMatchSchema('articles', 'PUT_article')
     expect(updateArticleResponse.article.title).shouldEqual(modifiedlArticleTitle)
     const newSlugId = updateArticleResponse.article.slug
 
@@ -82,6 +85,7 @@ test('Create, Update and Delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
+    await expect(articlesResponse).shouldMatchSchema('articles', 'GET_articles')
     expect(articlesResponse.articles[0].title).shouldEqual(modifiedlArticleTitle)
 
     await api
@@ -92,5 +96,6 @@ test('Create, Update and Delete Article', async({ api }) => {
         .path('/articles')
         .params({limit:10, offset:0})
         .getRequest(200)
+    await expect(articlesResponseAfterDeletion).shouldMatchSchema('articles', 'GET_articles')
     expect(articlesResponseAfterDeletion.articles[0].title).not.shouldEqual(modifiedlArticleTitle)
 })
