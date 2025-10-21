@@ -1,13 +1,13 @@
 import { test } from '../../utils/fixtures';
 import { LoginPage } from '../../page_objects/loginPage';
 import { config } from '../../api-test.config';
-import { testDataForNegativeLoginTestCases, testDataForSignInButtonStateValidation } from '../../test_data/negativeTestsForLoginTestData'
+import { testDataForNegativeLoginTestCases, testDataForSignInButtonStateValidation } from '../../test_data/negativeTestDataForLoginTests'
 
 test.beforeEach( async({page}) => {
   await page.goto(`${config.baseURL}/login`)
 })
 
-// Data Driven Testing, uses test data file from test_data/negativeTestsForLoginTestData.ts
+// Data Driven Testing, uses test data file from test_data/negativeTestDataForLoginTests.ts
 testDataForNegativeLoginTestCases.forEach(({userEmail, password, expectedErrorMessage}) => {
     test(`Error message validation on Login form for username ${userEmail} and password ${password}`, async ({page}) => {
         const onLoginPage = new LoginPage(page)
@@ -18,7 +18,7 @@ testDataForNegativeLoginTestCases.forEach(({userEmail, password, expectedErrorMe
     })     
 })
 
-// Data Driven Testing, uses test data file from test_data/negativeTestsForLoginTestData.ts
+// Data Driven Testing, uses test data file from test_data/negativeTestDataForLoginTests.ts
 testDataForSignInButtonStateValidation.forEach(({userEmail, password, expectedSignInButtonState}) => {
     test(`Verify Sign In button state when username ${userEmail} and password ${password} are entered`, async ({page}) => {
         const onLoginPage = new LoginPage(page)

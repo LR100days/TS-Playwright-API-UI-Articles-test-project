@@ -1,6 +1,6 @@
 import { test } from '../../utils/fixtures';
 import { expect } from '../../utils/custom-expect'
-import { lengthValidationForUsername, lengthValidationForPassword } from '../../test_data/negativeTestsForLoginTestData'
+import { lengthValidationForUsername, lengthValidationForPassword } from '../../test_data/negativeTestDataForLoginTests'
 
 lengthValidationForUsername.forEach(({username, usernameErrorMessage}) => {
     test(`Error message validation for username length ${username}`, async({api}) => {
