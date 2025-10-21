@@ -1,109 +1,45 @@
 import { test } from '../../utils/fixtures';
 import { LoginPage } from '../../page_objects/loginPage';
 import { config } from '../../api-test.config';
+import { testDataForNegativeLoginTestCases, testDataForSignInButtonStateValidation } from '../../test_data/negativeTestDataForLoginTests'
 
 test.beforeEach( async({page}) => {
   await page.goto(`${config.baseURL}/login`)
 })
 
-test.describe("Verify error messages on Log In page", async () => {
-    test('Error message validation for invalid password and email', async ({page}) => {
+// Data Driven Testing, uses test data file from test_data/negativeTestDataForLoginTests.ts
+testDataForNegativeLoginTestCases.forEach(({userEmail, password, expectedErrorMessage}) => {
+    test(`Error message validation on Login form for username ${userEmail} and password ${password}`, async ({page}) => {
         const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterInvalidEmail()
-        await onLoginPage.enterInvalidPassword()
+        await onLoginPage.enterEmail(userEmail)
+        await onLoginPage.enterPassword(password)
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
-        await onLoginPage.verifySignInFormIsShown()
-    })
-
-    test('Error message validation for invalid password and valid email', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.enterInvalidPassword()
-        await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
-        await onLoginPage.verifySignInFormIsShown()
-    })
-
-    test('Error message validation for valid password and invalid email', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterInvalidEmail()
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
-        await onLoginPage.verifySignInFormIsShown()
-    })
-
-    test('Error message validation for email and password fields when only spaces are entered', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterOnlySpacesForField('Email')
-        await onLoginPage.enterOnlySpacesForField('Password')
-        await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email can't be blank")
-        await onLoginPage.verifySignInFormIsShown()
-    })
-
-    test('Error message validation when password for different user is entered', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.enterPasswordForUser2()
-        await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email or password is invalid")
-        await onLoginPage.verifySignInFormIsShown()
-
-    })
-
-    test('Error message validation when email for different user is entered', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterEmailForUser2()
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email or password is invalid")
-        await onLoginPage.verifySignInFormIsShown()
-
-    })
-
+        await onLoginPage.actualErrorMessageTextIs(expectedErrorMessage)
+    })     
 })
 
-
-test.describe("Verify Sign In button state on Log In page", async () => {
-    test('Verify Sign In button state  when email and password fields are empty', async ({page}) => {
+// Data Driven Testing, uses test data file from test_data/negativeTestDataForLoginTests.ts
+testDataForSignInButtonStateValidation.forEach(({userEmail, password, expectedSignInButtonState}) => {
+    test(`Verify Sign In button state when username ${userEmail} and password ${password} are entered`, async ({page}) => {
         const onLoginPage = new LoginPage(page)
-        await onLoginPage.verifySignInButtonIsDisabled(true) 
-    })
-    
-    test('Verify Sign In button state  when valid email is entered and password field is empty', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.verifySignInButtonIsDisabled(true)
-    })
+        await onLoginPage.enterEmail(userEmail)
+        await onLoginPage.enterPassword(password)
+        await onLoginPage.verifyActualSignInButtonStateIs(expectedSignInButtonState)
+    })     
+})
 
-    test('Verify Sign In button state  when email field is empty and valid password is entered', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.verifySignInButtonIsDisabled(true)
-    })
-
-    test('Verify Sign In button state  when valid email and password are entered', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.verifySignInButtonIsDisabled(false)
-    })
-
-    test('Verify Sign In button state when data from required fields is removed', async ({page}) => {
-        const onLoginPage = new LoginPage(page)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.verifySignInButtonIsDisabled(false)
-        await onLoginPage.clearField('Email')
-        await onLoginPage.verifySignInButtonIsDisabled(true)
-        await onLoginPage.enterConfiguredValidEmail()
-        await onLoginPage.verifySignInButtonIsDisabled(false)
-        await onLoginPage.clearField('Password')
-        await onLoginPage.verifySignInButtonIsDisabled(true)
-        await onLoginPage.enterConfiguredValidPassword()
-        await onLoginPage.verifySignInButtonIsDisabled(false)
-    })
-
+test('Verify Sign In button state when data from required fields is removed and entered again', async ({page}) => {
+    const onLoginPage = new LoginPage(page)
+    await onLoginPage.enterEmail(config.userEmail)
+    await onLoginPage.enterPassword(config.userPassword)
+    await onLoginPage.verifyActualSignInButtonStateIs(true)
+    await onLoginPage.clearField('Email')
+    await onLoginPage.verifyActualSignInButtonStateIs(false)
+    await onLoginPage.enterEmail(config.userEmail)
+    await onLoginPage.verifyActualSignInButtonStateIs(true)
+    await onLoginPage.clearField('Password')
+    await onLoginPage.verifyActualSignInButtonStateIs(false)
+    await onLoginPage.enterPassword(config.userPassword)
+    await onLoginPage.verifyActualSignInButtonStateIs(true)
 });
+
