@@ -16,8 +16,8 @@ test('e2e UI test @UIe2e', async ({page}) => {
     const onLoginPage = new LoginPage(page)
 
     //Login
-    await onLoginPage.enterConfiguredValidEmail()
-    await onLoginPage.enterConfiguredValidPassword()
+    await onLoginPage.enterEmail(config.userEmail)
+    await onLoginPage.enterPassword(config.userPassword)
     await onLoginPage.clickSignInButton()
     await onArticlesListPage.verifyThatHomePageIsShown()
 

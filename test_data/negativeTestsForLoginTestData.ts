@@ -1,5 +1,23 @@
 import { faker } from '@faker-js/faker'
+import { config } from '../api-test.config';
 
+export const testDataForNegativeLoginTestCases = [
+    { userEmail: '   ', password: config.userPassword, expectedErrorMessage: 'email can\'t be blank'},
+    { userEmail: config.userEmail, password: '   ', expectedErrorMessage: 'password can\'t be blank'},
+    { userEmail: '   ', password: '   ', expectedErrorMessage:  'email can\'t be blank'},
+    { userEmail: 'a', password: '1', expectedErrorMessage: 'email or password is invalid'},
+    { userEmail: config.userEmail, password: '2', expectedErrorMessage: 'email or password is invalid'},
+    { userEmail: 'b', password: config.userPassword, expectedErrorMessage: 'email or password is invalid'},
+    { userEmail: config.userEmail, password: config.anotherUser2Password, expectedErrorMessage: 'email or password is invalid'},
+    { userEmail: config.anotherUser2Email, password: config.userPassword, expectedErrorMessage: 'email or password is invalid'},
+]
+
+export const testDataForSignInButtonStateValidation = [
+    { userEmail: '', password: '', expectedSignInButtonState: false},
+    { userEmail: config.userEmail, password: '', expectedSignInButtonState: false},
+    { userEmail: '', password: config.userPassword, expectedSignInButtonState: false},
+    { userEmail: config.userEmail, password: config.userPassword, expectedSignInButtonState: true},
+]
 
 export const lengthValidationForUsername = [
     { username: '', usernameErrorMessage: "can't be blank"},
