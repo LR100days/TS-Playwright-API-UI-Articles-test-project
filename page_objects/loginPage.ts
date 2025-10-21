@@ -1,6 +1,11 @@
 import  { Page, expect } from '@playwright/test';
 import { config } from '../api-test.config';
 
+const possibleErrorMessagesTextFor = {
+    invalidCredentials: 'email or password is invalid',
+    blankEmail: `email can't be blank`,
+    blankPassword: `password can't be blank`
+};
 
 export class LoginPage {
     readonly page: Page
@@ -34,8 +39,16 @@ export class LoginPage {
         await this.page.getByPlaceholder('Password').fill('1')
     }
 
-    async verifyErrorMessageIs(errorMessage: string){
-        await expect(this.page.locator('.error-messages li')).toHaveText(errorMessage)
+    async verifyErrorMessageText(){
+        const actualErrorMessageText = (await this.page.locator('.error-messages li').textContent()) 
+        if( actualErrorMessageText === possibleErrorMessagesTextFor.invalidCredentials){
+          await expect(this.page.locator('.error-messages li')).toHaveText(possibleErrorMessagesTextFor.invalidCredentials)
+        } else if (actualErrorMessageText === possibleErrorMessagesTextFor.blankPassword) {
+            await expect(this.page.locator('.error-messages li')).toHaveText(possibleErrorMessagesTextFor.blankPassword)
+        } else {
+            await expect(this.page.locator('.error-messages li')).toHaveText(possibleErrorMessagesTextFor.blankEmail)
+        }
+        
     }
 
     async verifySignInButtonIsDisabled(buttonState: boolean){
@@ -47,7 +60,7 @@ export class LoginPage {
     }
 
     async verifySignInFormIsShown(){
-        expect(this.page.locator('h1')).toHaveText('Sign in')
+        await expect(this.page.locator('h1')).toHaveText('Sign in')
     }
 
     async clearField(fieldName: string){

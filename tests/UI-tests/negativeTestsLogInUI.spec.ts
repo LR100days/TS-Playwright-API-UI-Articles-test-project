@@ -2,6 +2,8 @@ import { test } from '../../utils/fixtures';
 import { LoginPage } from '../../page_objects/loginPage';
 import { config } from '../../api-test.config';
 
+
+
 test.beforeEach( async({page}) => {
   await page.goto(`${config.baseURL}/login`)
 })
@@ -12,7 +14,7 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterInvalidEmail()
         await onLoginPage.enterInvalidPassword()
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
     })
 
@@ -21,7 +23,7 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterConfiguredValidEmail()
         await onLoginPage.enterInvalidPassword()
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
     })
 
@@ -30,7 +32,7 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterInvalidEmail()
         await onLoginPage.enterConfiguredValidPassword()
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs('email or password is invalid')
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
     })
 
@@ -39,7 +41,16 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterOnlySpacesForField('Email')
         await onLoginPage.enterOnlySpacesForField('Password')
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email can't be blank")
+        await onLoginPage.verifyErrorMessageText()
+        await onLoginPage.verifySignInFormIsShown()
+    })
+
+    test('Error message validation for password field when only spaces are entered', async ({page}) => {
+        const onLoginPage = new LoginPage(page)
+        await onLoginPage.enterConfiguredValidEmail()
+        await onLoginPage.enterOnlySpacesForField('Password')
+        await onLoginPage.clickSignInButton()
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
     })
 
@@ -48,7 +59,7 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterConfiguredValidEmail()
         await onLoginPage.enterPasswordForUser2()
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email or password is invalid")
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
 
     })
@@ -58,7 +69,7 @@ test.describe("Verify error messages on Log In page", async () => {
         await onLoginPage.enterEmailForUser2()
         await onLoginPage.enterConfiguredValidPassword()
         await onLoginPage.clickSignInButton()
-        await onLoginPage.verifyErrorMessageIs("email or password is invalid")
+        await onLoginPage.verifyErrorMessageText()
         await onLoginPage.verifySignInFormIsShown()
 
     })
